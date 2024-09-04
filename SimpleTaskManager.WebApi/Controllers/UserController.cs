@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SimpleTaskManager.BLL.Configurations;
 using SimpleTaskManager.BLL.DTOs;
 using SimpleTaskManager.BLL.Interfaces;
-using SimpleTaskManager.BLL.Services;
 
 namespace SimpleTaskManager.WebApi.Controllers
 {
@@ -34,12 +35,12 @@ namespace SimpleTaskManager.WebApi.Controllers
         public async Task<IActionResult> Register([FromBody]RegisterUserDTO registerUserDto)
         {
             var result = await _userService.RegisterUserAsync(registerUserDto);
-            if (!result)
+            if (!result.Success)
             {
-                return BadRequest("Username or Email already registered.");
+                return BadRequest(result.Message);
             }
 
-            return Ok("User registered successfully.");
+            return Ok(result.Message);
         }
 
         [HttpPost("login")]

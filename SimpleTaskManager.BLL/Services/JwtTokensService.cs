@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SimpleTaskManager.BLL.Configurations;
 using SimpleTaskManager.BLL.Interfaces;
 using SimpleTaskManager.DAL.Models;
 using SimpleTaskManager.DAL.Repository.Interfaces;
@@ -51,7 +52,7 @@ namespace SimpleTaskManager.BLL.Services
             return token;
         }
 
-        public async Task<User> GetUserFromAccessTokenAsync(string accessToken)
+        public async Task<User?> GetUserFromAccessTokenAsync(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             if (!tokenHandler.CanReadToken(accessToken))
@@ -70,7 +71,7 @@ namespace SimpleTaskManager.BLL.Services
             var user = await _repository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId);
             if (user is null)
             {
-                throw new SecurityTokenArgumentException($"User from access token not found!");
+                return null;
             }
 
             return user;

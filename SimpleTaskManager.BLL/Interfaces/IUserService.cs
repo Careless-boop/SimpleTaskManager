@@ -6,6 +6,6 @@ namespace SimpleTaskManager.BLL.Interfaces
     public interface IUserService
     {
         Task<User?> AuthenticateUserAsync(LoginUserDTO loginUserDto);
-        Task<bool> RegisterUserAsync(RegisterUserDTO registerUserDto);
+        Task<(bool Success, string Message)> RegisterUserAsync(RegisterUserDTO registerUserDto);
     }
 }

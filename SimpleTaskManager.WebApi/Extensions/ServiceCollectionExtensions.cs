@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using SimpleTaskManager.BLL.Configurations;
 using SimpleTaskManager.BLL.Interfaces;
 using SimpleTaskManager.BLL.Services;
 using SimpleTaskManager.DAL;
@@ -18,6 +20,11 @@ namespace SimpleTaskManager.WebApi.Extensions
             if(jwtConfig != null)
             {
                 services.AddSingleton(jwtConfig);
+            }
+            var passwordConfig = configuration.GetSection("Password").Get<PasswordConfiguration>();
+            if(passwordConfig != null)
+            {
+                services.AddSingleton(passwordConfig);
             }
         }
         public static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -69,6 +76,39 @@ namespace SimpleTaskManager.WebApi.Extensions
         public static void AddAdditionalServices(this IServiceCollection services)
         {
             services.AddTransient<ICookiesService, CookiesService>();
+        }
+        public static void AddSwagger(this IServiceCollection services)
+        {
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Manager API", Version = "v1" });
+                opt.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = JwtBearerDefaults.AuthenticationScheme
+                });
+
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+                            },
+                                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                                In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
+                });
+            });
         }
     }
 }

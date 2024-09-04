@@ -1,4 +1,4 @@
-﻿namespace SimpleTaskManager.BLL.Services
+﻿namespace SimpleTaskManager.BLL.Configurations
 {
     public class JwtTokensConfiguration
     {
