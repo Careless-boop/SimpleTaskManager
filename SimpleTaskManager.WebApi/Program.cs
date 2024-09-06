@@ -1,4 +1,5 @@
 using SimpleTaskManager.WebApi.Extensions;
+using SimpleTaskManager.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//applying user validation middleware to avoid repetition
+app.UseMiddleware<UserValidationMiddleware>();
 app.MapControllers();
 
 app.Run();

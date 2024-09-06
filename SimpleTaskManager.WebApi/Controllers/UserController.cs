@@ -15,20 +15,17 @@ namespace SimpleTaskManager.WebApi.Controllers
         private readonly IJwtTokensService _jwtTokensService;
         private readonly ICookiesService _cookiesService;
         private readonly JwtTokensConfiguration _jwtConfiguration;
-        private readonly IHttpContextAccessor _contextAccessor;
 
         public UserController(
             IUserService userService,
             IJwtTokensService jwtTokensService,
             ICookiesService cookiesService,
-            JwtTokensConfiguration jwtConfiguration,
-            IHttpContextAccessor contextAccessor)
+            JwtTokensConfiguration jwtConfiguration)
         {
             _userService = userService;
             _jwtTokensService = jwtTokensService;
             _cookiesService = cookiesService;
             _jwtConfiguration = jwtConfiguration;
-            _contextAccessor = contextAccessor;
         }
 
         [HttpPost("register")]
@@ -53,7 +50,7 @@ namespace SimpleTaskManager.WebApi.Controllers
             }
             var token = _jwtTokensService.GenerateAccessToken(user);
 
-            await _cookiesService.AppendCookiesToResponseAsync(_contextAccessor.HttpContext!.Response,
+            await _cookiesService.AppendCookiesToResponseAsync(HttpContext!.Response,
                 ("accessToken", token, new CookieOptions
                 {
                     Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtConfiguration.AccessTokenExpirationMinutes),
