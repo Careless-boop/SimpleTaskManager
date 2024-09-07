@@ -12,10 +12,12 @@ namespace SimpleTaskManager.WebApi.Controllers
     public class TaskController : ControllerBase
     {
         private readonly ITaskService _taskService;
+        private readonly ILogger<TaskController> _logger;
 
-        public TaskController(ITaskService taskService)
+        public TaskController(ITaskService taskService, ILogger<TaskController> logger)
         {
             _taskService = taskService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -29,13 +31,15 @@ namespace SimpleTaskManager.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostTask([FromBody] TaskDTO task)
+        public async Task<IActionResult> PostTask([FromBody] TaskDTO taskData)
         {
             var user = HttpContext.Items["User"] as User;
 
-            await _taskService.CreateTaskAsync(user!, task);
+            var task = await _taskService.CreateTaskAsync(user!, taskData);
 
-            return Ok(task);
+            _logger.LogInformation($"User {user!.Email} created task with id - {task.Id}");
+
+            return Ok(taskData);
         }
 
         [HttpPut("{taskId}")]
@@ -47,9 +51,12 @@ namespace SimpleTaskManager.WebApi.Controllers
 
             if(result.Task == null)
             {
+                _logger.LogWarning($"User {user.Email} failed to update task with id - {taskId}\n\t" +
+                    $"Message: {result.Message}");
                 return BadRequest(result.Message);
             }
 
+            _logger.LogInformation($"User {user.Email} updated task with id - {taskId}");
             return Ok(result.Task);
         }
 
@@ -62,9 +69,12 @@ namespace SimpleTaskManager.WebApi.Controllers
 
             if (!result.IsDeleted)
             {
+                _logger.LogWarning($"User {user.Email} failed to deleted task with id - {taskId}\n\t" +
+                    $"Message: {result.Message}");
                 return BadRequest(result.Message);
             }
 
+            _logger.LogInformation($"User {user.Email} deleted task with id - {taskId}");
             return Ok(result.Message);
         }
 

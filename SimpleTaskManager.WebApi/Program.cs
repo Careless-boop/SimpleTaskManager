@@ -3,6 +3,8 @@ using SimpleTaskManager.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddLogging();
+
 // Add services to the container.
 builder.Services.AddConfigurationServices(builder.Configuration);
 builder.Services.AddDbContext(builder.Configuration);
@@ -28,6 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionHandler>();
 
 //applying user validation middleware to avoid repetition
 app.UseMiddleware<UserValidationMiddleware>();

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using SimpleTaskManager.BLL.Configurations;
+﻿using SimpleTaskManager.BLL.Configurations;
 using SimpleTaskManager.BLL.DTOs;
 using SimpleTaskManager.BLL.Interfaces;
 using SimpleTaskManager.DAL.Models;
