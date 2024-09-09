@@ -1,0 +1,45 @@
+# This workflow will build a .NET project
+
+name: Atomation_Testing_on_Push_Pull_Request
+
+on:
+  push:
+    branches: [ "master" ]    
+  pull_request:
+    branches: [ "master" ]
+    #Manual workflow start
+  workflow_dispatch:
+  
+permissions: 
+  checks: write
+  
+jobs:
+  
+  build-and-test:
+
+    runs-on: windows-2022
+    env:
+      SOLUTION_PATH: 'SimpleTaskManager.sln'
+      BUILD_CONFIG: 'Debug'
+            
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore $env:SOLUTION_PATH
+    - name: Build
+      run: dotnet build $env:SOLUTION_PATH --configuration $env:BUILD_CONFIG --no-restore
+    - name: Test
+      run: dotnet test $env:SOLUTION_PATH --configuration $env:BUILD_CONFIG --no-build --verbosity normal --logger "trx;LogFileName=test-res.trx" || true
+    - name: Create-Testing-Result-Report
+      uses: phoenix-actions/test-reporting@v8      
+      if: success() || failure()
+      id: test-report
+      with:
+        name: Test-Results
+        reporter: dotnet-trx
+        path: "**/test-res.trx"        
+        fail-on-error: true
