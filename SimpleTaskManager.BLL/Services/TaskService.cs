@@ -35,13 +35,13 @@ namespace SimpleTaskManager.BLL.Services
             return result;
         }
 
-        public async Task<IEnumerable<DAL.Models.Task>> GetTasksBuUserAsync(Guid userId, TaskFilterDTO filter)
+        public async Task<IEnumerable<DAL.Models.Task>> GetTasksByUserAsync(Guid userId, TaskFilterDTO filter)
         {
             var query = _repository.TaskRepository.FindAll(t => t.UserId == userId);
             return await GetTasksAsync(filter, query);
         }
 
-        public async Task<IEnumerable<DAL.Models.Task>> GetTasksAsync(TaskFilterDTO filter, IQueryable<DAL.Models.Task>? outerQuery = null)
+        private async Task<IEnumerable<DAL.Models.Task>> GetTasksAsync(TaskFilterDTO filter, IQueryable<DAL.Models.Task>? outerQuery = null)
         {
             var query = outerQuery ?? _repository.TaskRepository.FindAll();
 

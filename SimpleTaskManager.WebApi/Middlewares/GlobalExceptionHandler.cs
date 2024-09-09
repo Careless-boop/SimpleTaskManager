@@ -17,7 +17,7 @@ namespace SimpleTaskManager.WebApi.Middlewares
             {
                 await _next(context);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await HandleExceptionAsync(context);
             }

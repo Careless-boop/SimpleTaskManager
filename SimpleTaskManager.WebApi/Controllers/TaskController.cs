@@ -25,7 +25,7 @@ namespace SimpleTaskManager.WebApi.Controllers
         {
             var user = HttpContext.Items["User"] as User;
 
-            var result = await _taskService.GetTasksBuUserAsync(user!.Id, filter);
+            var result = await _taskService.GetTasksByUserAsync(user!.Id, filter);
 
             return Ok(result);
         }
